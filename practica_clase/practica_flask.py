@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import psycopg2
-#import pdb
+
 app = Flask(__name__)
 
 def get_connection():
@@ -11,34 +11,51 @@ def get_connection():
             database="TOA_TAS",
             user="postgres",
             password="root",
-            port="5432",
-            options='-c client_encoding=UTF8' 
+            port="5432"
         )
+        # Ajuste de encoding (clave para evitar el error utf-8)
+        connection.set_client_encoding('LATIN1')
         return connection
     except Exception as e:
         print("Error al conectar:", e)
         return None
-    
+
 
 @app.route("/api/estudiantes", methods=["GET"])
 def get_estudiantes():
     """Endpoint para obtener la lista de estudiantes"""
-    conn = get_connection()
-    # pdb.set_trace()  # Punto de interrupción para depuración
-    if conn:
+    try:
+        conn = get_connection()
+        if not conn:
+            return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
         cursor = conn.cursor()
-        cursor.execute("SELECT id, cedula,nombres, apellidos, direccion, fecha_nacimiento FROM estudiantes")
+        cursor.execute("""
+            SELECT id, cedula, nombres, apellidos, direccion, fecha_nacimiento 
+            FROM estudiantes
+        """)
         estudiantes = cursor.fetchall()
+
         cursor.close()
         conn.close()
-        
-        # Convertir a formato JSON
-        estudiantes_list = [{"id": e[0], "cedula": e[1], "nombres": e[2], "apellidos": e[3], "direccion": e[4], "fecha_nacimiento": e[5]} for e in estudiantes]
+
+        estudiantes_list = []
+        for e in estudiantes:
+            estudiantes_list.append({
+                "id": e[0],
+                "cedula": e[1],
+                "nombres": e[2],
+                "apellidos": e[3],
+                "direccion": e[4],
+                "fecha_nacimiento": str(e[5]) if e[5] else None
+            })
+
         return jsonify(estudiantes_list)
-    else:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-    
-    
-    
+
+    except Exception as e:
+        print("Error en endpoint:", e)
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0", port=5070,debug=False)
+    app.run(host="0.0.0.0", port=5070, debug=False)
