@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import psycopg2
-import pdb
+#import pdb
 app = Flask(__name__)
 
 def get_connection():
@@ -12,7 +12,7 @@ def get_connection():
             user="postgres",
             password="root",
             port="5432",
-            options='-c client_encoding=LATIN1' 
+            options='-c client_encoding=UTF8' 
         )
         return connection
     except Exception as e:
@@ -24,7 +24,7 @@ def get_connection():
 def get_estudiantes():
     """Endpoint para obtener la lista de estudiantes"""
     conn = get_connection()
-    pdb.set_trace()  # Punto de interrupción para depuración
+    # pdb.set_trace()  # Punto de interrupción para depuración
     if conn:
         cursor = conn.cursor()
         cursor.execute("SELECT id, cedula,nombres, apellidos, direccion, fecha_nacimiento FROM estudiantes")
