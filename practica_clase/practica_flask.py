@@ -11,7 +11,8 @@ def get_connection():
             database="TOA_TAS",
             user="postgres",
             password="root",
-            port="5432"
+            port="5432",
+            options='-c client_encoding=LATIN1' 
         )
         return connection
     except Exception as e:
