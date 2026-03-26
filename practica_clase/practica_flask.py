@@ -7,11 +7,11 @@ def get_connection():
     """Conexión a la base de datos PostgreSQL"""
     try:
         connection = psycopg2.connect(
-            host="localhost",
-            database="prueba",
+            host="10.79.0.78",
+            database="TOA_TAS",
             user="postgres",
-            password="12345678",
-            port="5439"
+            password="root",
+            port="5432"
         )
         return connection
     except Exception as e:
