@@ -1,3 +1,6 @@
+import os
+os.environ["PGCLIENTENCODING"] = "LATIN1"
+
 from flask import Flask, jsonify
 import psycopg2
 
@@ -15,18 +18,6 @@ def get_connection():
     except Exception as e:
         print("Error al conectar:", e)
         return None
-
-
-def limpiar(valor):
-    if valor is None:
-        return None
-    try:
-        return str(valor)
-    except:
-        try:
-            return valor.encode('latin1').decode('utf-8', errors='ignore')
-        except:
-            return ""
 
 
 @app.route("/api/estudiantes", methods=["GET"])
@@ -48,17 +39,17 @@ def get_estudiantes():
         for e in datos:
             resultado.append({
                 "id": e[0],
-                "cedula": limpiar(e[1]),
-                "nombres": limpiar(e[2]),
-                "apellidos": limpiar(e[3]),
-                "direccion": limpiar(e[4]),
+                "cedula": str(e[1]),
+                "nombres": str(e[2]),
+                "apellidos": str(e[3]),
+                "direccion": str(e[4]),
                 "fecha_nacimiento": str(e[5]) if e[5] else None
             })
 
         return jsonify(resultado)
 
     except Exception as e:
-        print("Error:", e)
+        print("Error en endpoint:", e)
         return jsonify({"error": str(e)}), 500
 
     finally:
