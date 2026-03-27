@@ -2,9 +2,11 @@ import os
 os.environ["PGCLIENTENCODING"] = "LATIN1"  # importante para tu server en Windows
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 import psycopg2
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def get_connection():
     try:
