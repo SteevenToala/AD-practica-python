@@ -29,7 +29,7 @@ def get_estudiantes():
         cursor = conn.cursor()
 
         # Forzar encoding correcto
-        cursor.execute("SET client_encoding TO 'LATIN1'")
+        #cursor.execute("SET client_encoding TO 'LATIN1'")
 
         cursor.execute("""
             SELECT id, cedula, nombres, apellidos, direccion, fecha_nacimiento 
