@@ -1,5 +1,5 @@
 import os
-os.environ["PGCLIENTENCODING"] = "LATIN1"
+os.environ["PGCLIENTENCODING"] = "LATIN1"  # importante por tu server en Windows
 
 from flask import Flask, jsonify
 import psycopg2
@@ -40,7 +40,7 @@ def get_estudiantes():
             resultado.append({
                 "id": e[0],
                 "cedula": str(e[1]),
-                "nombres": str(e[2]),
+                "nombres": str(e[2]),  # ahora se verá correcto
                 "apellidos": str(e[3]),
                 "direccion": str(e[4]),
                 "fecha_nacimiento": str(e[5]) if e[5] else None
