@@ -17,13 +17,14 @@ def get_connection():
         return None
 
 
-def safe_str(value):
-    """Convierte valores evitando errores de encoding"""
+def limpiar(valor):
+    if valor is None:
+        return None
     try:
-        return str(value)
+        return str(valor)
     except:
         try:
-            return value.encode('latin1').decode('utf-8', errors='ignore')
+            return valor.encode('latin1').decode('utf-8', errors='ignore')
         except:
             return ""
 
@@ -32,7 +33,7 @@ def safe_str(value):
 def get_estudiantes():
     conn = get_connection()
     if not conn:
-        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+        return jsonify({"error": "No se pudo conectar"}), 500
 
     try:
         cursor = conn.cursor()
@@ -41,23 +42,23 @@ def get_estudiantes():
             FROM estudiantes
         """)
 
-        estudiantes = cursor.fetchall()
+        datos = cursor.fetchall()
 
         resultado = []
-        for e in estudiantes:
+        for e in datos:
             resultado.append({
                 "id": e[0],
-                "cedula": safe_str(e[1]),
-                "nombres": safe_str(e[2]),
-                "apellidos": safe_str(e[3]),
-                "direccion": safe_str(e[4]),
+                "cedula": limpiar(e[1]),
+                "nombres": limpiar(e[2]),
+                "apellidos": limpiar(e[3]),
+                "direccion": limpiar(e[4]),
                 "fecha_nacimiento": str(e[5]) if e[5] else None
             })
 
         return jsonify(resultado)
 
     except Exception as e:
-        print("Error en endpoint:", e)
+        print("Error:", e)
         return jsonify({"error": str(e)}), 500
 
     finally:
@@ -65,4 +66,4 @@ def get_estudiantes():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5070, debug=False)
+    app.run(host="0.0.0.0", port=5070)
