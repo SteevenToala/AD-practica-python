@@ -29,7 +29,7 @@ def get_estudiantes():
     try:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT id, cedula, nombres, apellidos, direccion, fecha_nacimiento 
+            SELECT id, cedula, nombres, apellidos, direccion, fechaNacimiento 
             FROM estudiantes
         """)
 
