@@ -43,7 +43,7 @@ def get_estudiantes():
                 "nombres": str(e[2]),  # ahora se verá correcto
                 "apellidos": str(e[3]),
                 "direccion": str(e[4]),
-                "fecha_nacimiento": str(e[5]) if e[5] else None
+                "fechaNacimiento": str(e[5]) if e[5] else None
             })
 
         return jsonify(resultado)
