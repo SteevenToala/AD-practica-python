@@ -10,12 +10,22 @@ def get_connection():
             database="TOA_TAS",
             user="postgres",
             password="root",
-            port="5432",
-            options='-c client_encoding=LATIN1'
+            port="5432"
         )
     except Exception as e:
         print("Error al conectar:", e)
         return None
+
+
+def safe_str(value):
+    """Convierte valores evitando errores de encoding"""
+    try:
+        return str(value)
+    except:
+        try:
+            return value.encode('latin1').decode('utf-8', errors='ignore')
+        except:
+            return ""
 
 
 @app.route("/api/estudiantes", methods=["GET"])
@@ -37,10 +47,10 @@ def get_estudiantes():
         for e in estudiantes:
             resultado.append({
                 "id": e[0],
-                "cedula": str(e[1]),
-                "nombres": str(e[2]),
-                "apellidos": str(e[3]),
-                "direccion": str(e[4]),
+                "cedula": safe_str(e[1]),
+                "nombres": safe_str(e[2]),
+                "apellidos": safe_str(e[3]),
+                "direccion": safe_str(e[4]),
                 "fecha_nacimiento": str(e[5]) if e[5] else None
             })
 
