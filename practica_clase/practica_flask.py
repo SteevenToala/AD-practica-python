@@ -4,16 +4,15 @@ import psycopg2
 app = Flask(__name__)
 
 def get_connection():
-    """Conexión a PostgreSQL"""
     try:
-        connection = psycopg2.connect(
+        return psycopg2.connect(
             host="10.79.0.78",
             database="TOA_TAS",
             user="postgres",
             password="root",
-            port="5432"
+            port="5432",
+            options='-c client_encoding=LATIN1'
         )
-        return connection
     except Exception as e:
         print("Error al conectar:", e)
         return None
@@ -21,16 +20,12 @@ def get_connection():
 
 @app.route("/api/estudiantes", methods=["GET"])
 def get_estudiantes():
+    conn = get_connection()
+    if not conn:
+        return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
+
     try:
-        conn = get_connection()
-        if not conn:
-            return jsonify({"error": "No se pudo conectar a la base de datos"}), 500
-
         cursor = conn.cursor()
-
-        # Forzar encoding correcto
-        #cursor.execute("SET client_encoding TO 'LATIN1'")
-
         cursor.execute("""
             SELECT id, cedula, nombres, apellidos, direccion, fecha_nacimiento 
             FROM estudiantes
@@ -38,12 +33,9 @@ def get_estudiantes():
 
         estudiantes = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
-
-        estudiantes_list = []
+        resultado = []
         for e in estudiantes:
-            estudiantes_list.append({
+            resultado.append({
                 "id": e[0],
                 "cedula": str(e[1]),
                 "nombres": str(e[2]),
@@ -52,11 +44,14 @@ def get_estudiantes():
                 "fecha_nacimiento": str(e[5]) if e[5] else None
             })
 
-        return jsonify(estudiantes_list)
+        return jsonify(resultado)
 
     except Exception as e:
         print("Error en endpoint:", e)
         return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
