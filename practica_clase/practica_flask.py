@@ -17,7 +17,7 @@ def add_cors_headers(response):
 def get_connection():
     try:
         return psycopg2.connect(
-            host="10.79.0.78",
+            host="10.79.9.105",
             database="TOA_TAS",
             user="postgres",
             password="root",
